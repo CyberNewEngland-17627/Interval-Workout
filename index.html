@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#111827">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent">
+
+<meta name="apple-mobile-web-app-title"
+      content="Interval Workout">
+
+<link rel="apple-touch-icon"
+      href="icons/icon-192.png">
+	  
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>Interval Workout</title>
+
+
+<style>
+
+/* ==========================================
+   BASIC PAGE SETUP
+   ========================================== */
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    background: #111827;
+
+    color: white;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+
+/* ==========================================
+   MAIN APP CONTAINER
+   ========================================== */
+
+.app {
+
+    width: 100%;
+
+    max-width: 500px;
+
+    min-height: 100vh;
+
+    padding: 30px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    text-align: center;
+
+}
+
+
+/* ==========================================
+   SCREENS
+   ========================================== */
+
+.screen {
+
+    display: none;
+
+}
+
+.screen.active {
+
+    display: block;
+
+}
+
+
+/* ==========================================
+   SETUP SCREEN
+   ========================================== */
+
+h1 {
+
+    font-size: 32px;
+
+    margin: 0 0 10px 0;
+
+}
+
+.subtitle {
+
+    color: #9ca3af;
+
+    margin-bottom: 35px;
+
+    font-size: 16px;
+
+}
+
+
+/* ==========================================
+   WORKOUT LENGTH BUTTONS
+   ========================================== */
+
+.duration-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 30px;
+
+}
+
+.duration-button {
+
+    flex: 1;
+
+    padding: 18px 10px;
+
+    border: 2px solid #374151;
+
+    border-radius: 12px;
+
+    background: #1f2937;
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+.duration-button.selected {
+
+    border-color: #22c55e;
+
+    background: #166534;
+
+}
+
+
+/* ==========================================
+   GENERAL BUTTON SETTINGS
+   ========================================== */
+
+button {
+
+    border: none;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+
+}
+
+
+/* ==========================================
+   START BUTTON
+   ========================================== */
+
+.start-button {
+
+    width: 100%;
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    background: #22c55e;
+
+    color: white;
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+}
+
+.start-button:active {
+
+    transform: scale(0.98);
+
+}
+
+
+/* ==========================================
+   GET READY SCREEN
+   ========================================== */
+
+.ready-title {
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 20px;
+
+    color: #22c55e;
+
+}
+
+.ready-countdown {
+
+    font-size: 120px;
+
+    line-height: 1;
+
+    font-weight: bold;
+
+    font-variant-numeric: tabular-nums;
+
+}
+
+
+/* ==========================================
+   WORKOUT PHASE
+   ========================================== */
+
+.phase {
+
+    font-size: 28px;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 10px;
+
+}
+
+.activity {
+
+    color: #22c55e;
+
+}
+
+.rest {
+
+    color: #f59e0b;
+
+}
+
+
+/* ==========================================
+   MAIN COUNTDOWN
+   ========================================== */
+
+.countdown {
+
+    font-size: 110px;
+
+    line-height: 1;
+
+    font-weight: bold;
+
+    margin: 20px 0;
+
+    font-variant-numeric: tabular-nums;
+
+}
+
+.seconds-label {
+
+    color: #9ca3af;
+
+    font-size: 16px;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* ==========================================
+   WORKOUT INFORMATION
+   ========================================== */
+
+.round {
+
+    font-size: 18px;
+
+    color: #d1d5db;
+
+    margin-bottom: 10px;
+
+}
+
+.remaining {
+
+    font-size: 16px;
+
+    color: #9ca3af;
+
+    margin-bottom: 15px;
+
+}
+
+
+/* ==========================================
+   PROGRESS BAR
+   ========================================== */
+
+.progress-container {
+
+    width: 100%;
+
+    height: 10px;
+
+    background: #374151;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    margin-bottom: 30px;
+
+}
+
+.progress-bar {
+
+    height: 100%;
+
+    width: 0%;
+
+    background: #22c55e;
+
+    transition: width 0.2s linear;
+
+}
+
+
+/* ==========================================
+   CONTROL BUTTONS
+   ========================================== */
+
+.control-buttons {
+
+    display: flex;
+
+    gap: 12px;
+
+}
+
+.control-button {
+
+    flex: 1;
+
+    padding: 16px;
+
+    border-radius: 12px;
+
+    background: #374151;
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+}
+
+.reset-button {
+
+    background: #991b1b;
+
+}
+
+
+/* ==========================================
+   COMPLETE SCREEN
+   ========================================== */
+
+.complete-title {
+
+    font-size: 40px;
+
+    margin-bottom: 20px;
+
+    color: #22c55e;
+
+}
+
+.complete-message {
+
+    color: #9ca3af;
+
+    font-size: 18px;
+
+    margin-bottom: 35px;
+
+}
+
+.again-button {
+
+    width: 100%;
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background: #22c55e;
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+}
+
+
+/* ==========================================
+   SMALLER PHONE SCREENS
+   ========================================== */
+
+@media (max-height: 650px) {
+
+    .app {
+
+        padding-top: 15px;
+
+        padding-bottom: 15px;
+
+    }
+
+    .countdown {
+
+        font-size: 85px;
+
+        margin: 10px 0;
+
+    }
+
+    .phase {
+
+        font-size: 22px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+<!-- ========================================
+     SETUP SCREEN
+     ======================================== -->
+
+<div id="setupScreen"
+     class="screen active">
+
+    <h1>
+        Interval Workout
+    </h1>
+
+    <div class="subtitle">
+
+        50 seconds activity • 10 seconds rest
+
+    </div>
+
+
+    <div class="duration-buttons">
+
+
+        <button
+            class="duration-button selected"
+            data-duration="10">
+
+            10 MIN
+
+        </button>
+
+
+        <button
+            class="duration-button"
+            data-duration="15">
+
+            15 MIN
+
+        </button>
+
+
+        <button
+            class="duration-button"
+            data-duration="20">
+
+            20 MIN
+
+        </button>
+
+
+    </div>
+
+
+    <button
+        id="startButton"
+        class="start-button">
+
+        START
+
+    </button>
+
+</div>
+
+
+
+<!-- ========================================
+     GET READY SCREEN
+     ======================================== -->
+
+<div id="readyScreen"
+     class="screen">
+
+    <div class="ready-title">
+
+        GET READY
+
+    </div>
+
+
+    <div id="readyCountdown"
+         class="ready-countdown">
+
+        3
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================
+     WORKOUT SCREEN
+     ======================================== -->
+
+<div id="workoutScreen"
+     class="screen">
+
+
+    <div id="phaseLabel"
+         class="phase activity">
+
+        ACTIVITY
+
+    </div>
+
+
+    <div id="countdown"
+         class="countdown">
+
+        50
+
+    </div>
+
+
+    <div class="seconds-label">
+
+        SECONDS
+
+    </div>
+
+
+    <div id="roundLabel"
+         class="round">
+
+        Round 1 of 10
+
+    </div>
+
+
+    <div id="remainingLabel"
+         class="remaining">
+
+        10:00 remaining
+
+    </div>
+
+
+    <div class="progress-container">
+
+        <div id="progressBar"
+             class="progress-bar">
+
+        </div>
+
+    </div>
+
+
+    <div class="control-buttons">
+
+
+        <button
+            id="pauseButton"
+            class="control-button">
+
+            PAUSE
+
+        </button>
+
+
+        <button
+            id="resetButton"
+            class="control-button reset-button">
+
+            RESET
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================
+     COMPLETE SCREEN
+     ======================================== -->
+
+<div id="completeScreen"
+     class="screen">
+
+
+    <div class="complete-title">
+
+        WORKOUT COMPLETE
+
+    </div>
+
+
+    <div class="complete-message">
+
+        Nice work! You finished your workout.
+
+    </div>
+
+
+    <button
+        id="againButton"
+        class="again-button">
+
+        DONE
+
+    </button>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+// ==========================================
+// WORKOUT SETTINGS
+// ==========================================
+
+const ACTIVITY_TIME = 50;
+
+const REST_TIME = 10;
+
+const READY_TIME = 3;
+
+
+let workoutDuration = 10;
+
+let totalWorkoutSeconds =
+    workoutDuration * 60;
+
+let totalRounds =
+    workoutDuration;
+
+
+let currentRound = 1;
+
+let currentPhase = "activity";
+
+let secondsRemaining =
+    ACTIVITY_TIME;
+
+
+let workoutStartTime = null;
+
+let phaseStartTime = null;
+
+let pausedAt = null;
+
+let totalPausedTime = 0;
+
+let paused = false;
+
+let timer = null;
+
+
+// ==========================================
+// SCREEN ELEMENTS
+// ==========================================
+
+const setupScreen =
+    document.getElementById("setupScreen");
+
+const readyScreen =
+    document.getElementById("readyScreen");
+
+const workoutScreen =
+    document.getElementById("workoutScreen");
+
+const completeScreen =
+    document.getElementById("completeScreen");
+
+
+const startButton =
+    document.getElementById("startButton");
+
+const pauseButton =
+    document.getElementById("pauseButton");
+
+const resetButton =
+    document.getElementById("resetButton");
+
+const againButton =
+    document.getElementById("againButton");
+
+
+const countdownDisplay =
+    document.getElementById("countdown");
+
+const readyCountdown =
+    document.getElementById("readyCountdown");
+
+const phaseLabel =
+    document.getElementById("phaseLabel");
+
+const roundLabel =
+    document.getElementById("roundLabel");
+
+const remainingLabel =
+    document.getElementById("remainingLabel");
+
+const progressBar =
+    document.getElementById("progressBar");
+
+
+// ==========================================
+// SCREEN WAKE LOCK
+// ==========================================
+
+let wakeLock = null;
+
+
+async function requestWakeLock() {
+
+    try {
+
+        if ("wakeLock" in navigator) {
+
+            wakeLock =
+                await navigator.wakeLock.request(
+                    "screen"
+                );
+
+            console.log(
+                "Screen wake lock enabled."
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "Wake lock unavailable:",
+            error
+        );
+
+    }
+
+}
+
+
+async function releaseWakeLock() {
+
+    if (wakeLock !== null) {
+
+        try {
+
+            await wakeLock.release();
+
+        }
+
+        catch (error) {
+
+            console.log(error);
+
+        }
+
+        wakeLock = null;
+
+    }
+
+}
+
+
+// ==========================================
+// AUDIO SYSTEM
+// ==========================================
+
+let audioContext = null;
+
+
+function initializeAudio() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+
+    if (audioContext.state === "suspended") {
+
+        audioContext.resume();
+
+    }
+
+}
+
+
+// ==========================================
+// CREATE BEEP
+// ==========================================
+
+function beep(
+    frequency = 800,
+    duration = 0.18
+) {
+
+    if (!audioContext) {
+
+        return;
+
+    }
+
+
+    const oscillator =
+        audioContext.createOscillator();
+
+
+    const gain =
+        audioContext.createGain();
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+
+    oscillator.type = "sine";
+
+    oscillator.frequency.value =
+        frequency;
+
+
+    gain.gain.setValueAtTime(
+        0.35,
+        audioContext.currentTime
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioContext.currentTime +
+        duration
+    );
+
+
+    oscillator.start();
+
+
+    oscillator.stop(
+        audioContext.currentTime +
+        duration
+    );
+
+}
+
+
+// ==========================================
+// STARTING COUNTDOWN BEEP
+// ==========================================
+
+function readyBeep() {
+
+    beep(600, 0.12);
+
+}
+
+
+// ==========================================
+// GO BEEP
+// ==========================================
+
+function goBeep() {
+
+    beep(1100, 0.25);
+
+}
+
+
+// ==========================================
+// TWO BEEPS
+// ACTIVITY → REST
+// ==========================================
+
+function activityCompleteSound() {
+
+    beep(850, 0.18);
+
+
+    setTimeout(() => {
+
+        beep(850, 0.18);
+
+    }, 300);
+
+}
+
+
+// ==========================================
+// ONE BEEP
+// REST → ACTIVITY
+// ==========================================
+
+function activityStartSound() {
+
+    beep(1100, 0.25);
+
+}
+
+
+// ==========================================
+// FIVE BEEPS
+// WORKOUT COMPLETE
+// ==========================================
+
+function workoutCompleteSound() {
+
+    const frequencies = [
+        1000,
+        1000,
+        1200,
+        1200,
+        1500
+    ];
+
+
+    frequencies.forEach(
+        (frequency, index) => {
+
+            setTimeout(() => {
+
+                beep(
+                    frequency,
+                    0.22
+                );
+
+            }, index * 300);
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// SELECT WORKOUT LENGTH
+// ==========================================
+
+const durationButtons =
+    document.querySelectorAll(
+        ".duration-button"
+    );
+
+
+durationButtons.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            durationButtons.forEach(
+                btn => {
+
+                    btn.classList.remove(
+                        "selected"
+                    );
+
+                }
+            );
+
+
+            button.classList.add(
+                "selected"
+            );
+
+
+            workoutDuration =
+                parseInt(
+                    button.dataset.duration
+                );
+
+
+            totalWorkoutSeconds =
+                workoutDuration * 60;
+
+
+            totalRounds =
+                workoutDuration;
+
+        }
+    );
+
+});
+
+
+// ==========================================
+// START BUTTON
+// ==========================================
+
+startButton.addEventListener(
+    "click",
+    () => {
+
+        initializeAudio();
+
+        requestWakeLock();
+
+
+        currentRound = 1;
+
+        currentPhase =
+            "activity";
+
+
+        secondsRemaining =
+            ACTIVITY_TIME;
+
+
+        paused = false;
+
+        totalPausedTime = 0;
+
+
+        setupScreen.classList.remove(
+            "active"
+        );
+
+
+        completeScreen.classList.remove(
+            "active"
+        );
+
+
+        workoutScreen.classList.remove(
+            "active"
+        );
+
+
+        readyScreen.classList.add(
+            "active"
+        );
+
+
+        startReadyCountdown();
+
+    }
+);
+
+
+// ==========================================
+// GET READY COUNTDOWN
+// ==========================================
+
+function startReadyCountdown() {
+
+    let count = READY_TIME;
+
+
+    readyCountdown.textContent =
+        count;
+
+
+    readyBeep();
+
+
+    const readyTimer =
+        setInterval(() => {
+
+            count--;
+
+
+            if (count > 0) {
+
+                readyCountdown.textContent =
+                    count;
+
+                readyBeep();
+
+            }
+
+
+            else {
+
+                clearInterval(
+                    readyTimer
+                );
+
+
+                readyCountdown.textContent =
+                    "GO";
+
+
+                goBeep();
+
+
+                setTimeout(() => {
+
+                    beginWorkout();
+
+                }, 500);
+
+            }
+
+        }, 1000);
+
+}
+
+
+// ==========================================
+// BEGIN WORKOUT
+// ==========================================
+
+function beginWorkout() {
+
+    readyScreen.classList.remove(
+        "active"
+    );
+
+
+    workoutScreen.classList.add(
+        "active"
+    );
+
+
+    workoutStartTime =
+        Date.now();
+
+
+    phaseStartTime =
+        Date.now();
+
+
+    updateDisplay();
+
+
+    startTimer();
+
+}
+
+
+// ==========================================
+// TIMER
+// ==========================================
+
+function startTimer() {
+
+    clearInterval(timer);
+
+
+    timer = setInterval(
+        updateTimer,
+        100
+    );
+
+}
+
+
+// ==========================================
+// UPDATE TIMER
+// ==========================================
+
+function updateTimer() {
+
+    if (paused) {
+
+        return;
+
+    }
+
+
+    const now =
+        Date.now();
+
+
+    const elapsedPhaseTime =
+        Math.floor(
+            (
+                now -
+                phaseStartTime
+            ) / 1000
+        );
+
+
+    secondsRemaining =
+        (
+            currentPhase === "activity"
+            ? ACTIVITY_TIME
+            : REST_TIME
+        )
+        -
+        elapsedPhaseTime;
+
+
+    updateDisplay();
+
+
+    if (secondsRemaining <= 0) {
+
+        handlePhaseComplete();
+
+    }
+
+
+    // ======================================
+    // TOTAL WORKOUT TIME
+    // ======================================
+
+    const totalElapsed =
+        Math.floor(
+            (
+                now -
+                workoutStartTime
+            ) / 1000
+        );
+
+
+    const remaining =
+        Math.max(
+            0,
+            totalWorkoutSeconds -
+            totalElapsed
+        );
+
+
+    updateOverallProgress(
+        totalElapsed
+    );
+
+
+    if (remaining <= 0) {
+
+        finishWorkout();
+
+    }
+
+}
+
+
+// ==========================================
+// PHASE COMPLETE
+// ==========================================
+
+function handlePhaseComplete() {
+
+
+    if (
+        currentPhase ===
+        "activity"
+    ) {
+
+
+        // Activity finished.
+
+        activityCompleteSound();
+
+
+        currentPhase =
+            "rest";
+
+
+        secondsRemaining =
+            REST_TIME;
+
+
+        phaseStartTime =
+            Date.now();
+
+
+        updateDisplay();
+
+
+    }
+
+
+    else {
+
+
+        // Rest finished.
+
+
+        if (
+            currentRound >=
+            totalRounds
+        ) {
+
+            finishWorkout();
+
+            return;
+
+        }
+
+
+        // Start next activity.
+
+
+        currentRound++;
+
+
+        currentPhase =
+            "activity";
+
+
+        secondsRemaining =
+            ACTIVITY_TIME;
+
+
+        phaseStartTime =
+            Date.now();
+
+
+        activityStartSound();
+
+
+        updateDisplay();
+
+    }
+
+}
+
+
+// ==========================================
+// UPDATE DISPLAY
+// ==========================================
+
+function updateDisplay() {
+
+
+    countdownDisplay.textContent =
+        Math.max(
+            0,
+            secondsRemaining
+        );
+
+
+    roundLabel.textContent =
+        "Round " +
+        currentRound +
+        " of " +
+        totalRounds;
+
+
+    if (
+        currentPhase ===
+        "activity"
+    ) {
+
+
+        phaseLabel.textContent =
+            "ACTIVITY";
+
+
+        phaseLabel.className =
+            "phase activity";
+
+
+        const progress =
+            (
+                (
+                    ACTIVITY_TIME -
+                    secondsRemaining
+                )
+                /
+                ACTIVITY_TIME
+            ) * 100;
+
+
+        progressBar.style.width =
+            progress + "%";
+
+
+    }
+
+
+    else {
+
+
+        phaseLabel.textContent =
+            "REST";
+
+
+        phaseLabel.className =
+            "phase rest";
+
+
+        const progress =
+            (
+                (
+                    REST_TIME -
+                    secondsRemaining
+                )
+                /
+                REST_TIME
+            ) * 100;
+
+
+        progressBar.style.width =
+            progress + "%";
+
+    }
+
+
+    // ======================================
+    // REMAINING WORKOUT TIME
+    // ======================================
+
+    if (workoutStartTime) {
+
+
+        const elapsed =
+            Math.floor(
+                (
+                    Date.now() -
+                    workoutStartTime
+                ) / 1000
+            );
+
+
+        const remaining =
+            Math.max(
+                0,
+                totalWorkoutSeconds -
+                elapsed
+            );
+
+
+        const minutes =
+            Math.floor(
+                remaining / 60
+            );
+
+
+        const seconds =
+            remaining % 60;
+
+
+        remainingLabel.textContent =
+            String(minutes) +
+            ":" +
+            String(seconds)
+                .padStart(2, "0") +
+            " remaining";
+
+    }
+
+}
+
+
+// ==========================================
+// OVERALL PROGRESS
+// ==========================================
+
+function updateOverallProgress(
+    elapsed
+) {
+
+
+    const progress =
+        Math.min(
+            100,
+            (
+                elapsed /
+                totalWorkoutSeconds
+            ) * 100
+        );
+
+
+    // This uses the same progress bar
+    // but represents the workout overall.
+
+    progressBar.style.width =
+        progress + "%";
+
+}
+
+
+// ==========================================
+// PAUSE / RESUME
+// ==========================================
+
+pauseButton.addEventListener(
+    "click",
+    () => {
+
+
+        if (!paused) {
+
+
+            paused = true;
+
+
+            pausedAt =
+                Date.now();
+
+
+            pauseButton.textContent =
+                "RESUME";
+
+
+        }
+
+
+        else {
+
+
+            const pauseDuration =
+                Date.now() -
+                pausedAt;
+
+
+            phaseStartTime +=
+                pauseDuration;
+
+
+            workoutStartTime +=
+                pauseDuration;
+
+
+            paused = false;
+
+
+            pauseButton.textContent =
+                "PAUSE";
+
+
+            initializeAudio();
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// RESET
+// ==========================================
+
+resetButton.addEventListener(
+    "click",
+    () => {
+
+
+        clearInterval(timer);
+
+
+        releaseWakeLock();
+
+
+        paused = false;
+
+
+        workoutStartTime =
+            null;
+
+
+        phaseStartTime =
+            null;
+
+
+        workoutScreen.classList.remove(
+            "active"
+        );
+
+
+        readyScreen.classList.remove(
+            "active"
+        );
+
+
+        completeScreen.classList.remove(
+            "active"
+        );
+
+
+        setupScreen.classList.add(
+            "active"
+        );
+
+
+        pauseButton.textContent =
+            "PAUSE";
+
+    }
+);
+
+
+// ==========================================
+// FINISH WORKOUT
+// ==========================================
+
+function finishWorkout() {
+
+
+    clearInterval(timer);
+
+
+    releaseWakeLock();
+
+
+    workoutScreen.classList.remove(
+        "active"
+    );
+
+
+    readyScreen.classList.remove(
+        "active"
+    );
+
+
+    completeScreen.classList.add(
+        "active"
+    );
+
+
+    workoutCompleteSound();
+
+}
+
+
+// ==========================================
+// DONE BUTTON
+// ==========================================
+
+againButton.addEventListener(
+    "click",
+    () => {
+
+
+        completeScreen.classList.remove(
+            "active"
+        );
+
+
+        setupScreen.classList.add(
+            "active"
+        );
+
+    }
+);
+
+
+// ==========================================
+// HANDLE SCREEN VISIBILITY
+// ==========================================
+
+document.addEventListener(
+    "visibilitychange",
+    async () => {
+
+
+        if (
+            document.visibilityState ===
+            "visible" &&
+            !paused
+        ) {
+
+
+            await requestWakeLock();
+
+
+        }
+
+    }
+);
+
+
+</script>
+
+</body>
+
+</html>
