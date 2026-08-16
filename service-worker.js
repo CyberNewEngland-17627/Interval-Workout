@@ -1,9 +1,13 @@
-const CACHE_NAME = "interval-workout-v1";
+const CACHE_NAME = "interval-workout-v2";
 
 const FILES_TO_CACHE = [
     "./",
     "./index.html",
-    "./manifest.json"
+    "./manifest.json",
+    "./audio/ready.wav",
+    "./audio/start.wav",
+    "./audio/transition.wav",
+    "./audio/complete.wav"
 ];
 
 
