@@ -853,56 +853,49 @@ async function releaseWakeLock() {
 
 }
 
-
 // ==========================================
-// AUDIO SYSTEM
-// ==========================================
-
-let audioContext = null;
-
-// ==========================================
-// iOS AUDIO SESSION
+// HTML AUDIO SYSTEM
 // ==========================================
 
-if ("audioSession" in navigator) {
+const readySound =
+    new Audio("./audio/ready.wav");
 
-    try {
+const startSound =
+    new Audio("./audio/start.wav");
 
-        navigator.audioSession.type = "playback";
+const transitionSound =
+    new Audio("./audio/transition.wav");
 
-        console.log(
-            "iOS audio session set to playback."
-        );
-
-    }
-
-    catch (error) {
-
-        console.log(
-            "Unable to set audio session:",
-            error
-        );
-
-    }
-
-}
-
-function initializeAudio() {
-
-    if (!audioContext) {
-
-        audioContext =
-            new (
-                window.AudioContext ||
-                window.webkitAudioContext
-            )();
-
-    }
+const completeSound =
+    new Audio("./audio/complete.wav");
 
 
-    if (audioContext.state === "suspended") {
+readySound.preload = "auto";
+startSound.preload = "auto";
+transitionSound.preload = "auto";
+completeSound.preload = "auto";
 
-        audioContext.resume();
+
+// ==========================================
+// PLAY AUDIO
+// ==========================================
+
+function playSound(sound) {
+
+    sound.currentTime = 0;
+
+    const result = sound.play();
+
+    if (result !== undefined) {
+
+        result.catch(error => {
+
+            console.log(
+                "Audio playback failed:",
+                error
+            );
+
+        });
 
     }
 
@@ -910,73 +903,12 @@ function initializeAudio() {
 
 
 // ==========================================
-// CREATE BEEP
-// ==========================================
-
-function beep(
-    frequency = 800,
-    duration = 0.18
-) {
-
-    if (!audioContext) {
-
-        return;
-
-    }
-
-
-    const oscillator =
-        audioContext.createOscillator();
-
-
-    const gain =
-        audioContext.createGain();
-
-
-    oscillator.connect(gain);
-
-    gain.connect(
-        audioContext.destination
-    );
-
-
-    oscillator.type = "sine";
-
-    oscillator.frequency.value =
-        frequency;
-
-
-    gain.gain.setValueAtTime(
-        0.35,
-        audioContext.currentTime
-    );
-
-
-    gain.gain.exponentialRampToValueAtTime(
-        0.001,
-        audioContext.currentTime +
-        duration
-    );
-
-
-    oscillator.start();
-
-
-    oscillator.stop(
-        audioContext.currentTime +
-        duration
-    );
-
-}
-
-
-// ==========================================
-// STARTING COUNTDOWN BEEP
+// COUNTDOWN BEEP
 // ==========================================
 
 function readyBeep() {
 
-    beep(600, 0.12);
+    playSound(readySound);
 
 }
 
@@ -987,7 +919,7 @@ function readyBeep() {
 
 function goBeep() {
 
-    beep(1100, 0.25);
+    playSound(startSound);
 
 }
 
@@ -999,14 +931,7 @@ function goBeep() {
 
 function activityCompleteSound() {
 
-    beep(850, 0.18);
-
-
-    setTimeout(() => {
-
-        beep(850, 0.18);
-
-    }, 300);
+    playSound(transitionSound);
 
 }
 
@@ -1018,7 +943,7 @@ function activityCompleteSound() {
 
 function activityStartSound() {
 
-    beep(1100, 0.25);
+    playSound(startSound);
 
 }
 
@@ -1031,30 +956,14 @@ function activityStartSound() {
 function workoutCompleteSound() {
 
     const frequencies = [
-        1000,
-        1000,
-        1200,
-        1200,
-        1500
+        0
     ];
 
-
-    frequencies.forEach(
-        (frequency, index) => {
-
-            setTimeout(() => {
-
-                beep(
-                    frequency,
-                    0.22
-                );
-
-            }, index * 300);
-
-        }
-    );
+    // Play the complete audio file.
+    playSound(completeSound);
 
 }
+
 
 
 // ==========================================
@@ -1115,8 +1024,6 @@ durationButtons.forEach(button => {
 startButton.addEventListener(
     "click",
     () => {
-
-        initializeAudio();
 
         requestWakeLock();
 
@@ -1636,8 +1543,6 @@ pauseButton.addEventListener(
             pauseButton.textContent =
                 "PAUSE";
 
-
-            initializeAudio();
 
         }
 
