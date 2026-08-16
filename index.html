@@ -860,6 +860,32 @@ async function releaseWakeLock() {
 
 let audioContext = null;
 
+// ==========================================
+// iOS AUDIO SESSION
+// ==========================================
+
+if ("audioSession" in navigator) {
+
+    try {
+
+        navigator.audioSession.type = "playback";
+
+        console.log(
+            "iOS audio session set to playback."
+        );
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "Unable to set audio session:",
+            error
+        );
+
+    }
+
+}
 
 function initializeAudio() {
 
